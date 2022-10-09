@@ -1,48 +1,70 @@
-import { EditorView } from '@codemirror/view'
-import { basicSetup } from 'codemirror'
+import { EditorView, basicSetup } from 'codemirror'
 import { EditorState } from '@codemirror/state'
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
+import { languages } from '@codemirror/language-data'
 
 export const useEditor = () => {
-  const createEditor = ({ editorDom }) => {
+  const defaultOnUpdateListener = (listener) => {
+    if (listener)
+      return listener
+
+    return (update) => {
+      if (update.docChanged)
+        console.log('doc changed')
+    }
+  }
+
+  const createEditor = ({ editorDom, onUpdateListener }) => {
     if (!editorDom.value)
       throw new Error('editorRef is not defined')
 
-    const state = EditorState.create({
-      doc: 'Hello world',
-      extensions: [
-        EditorView.updateListener.of((update) => {
-          if (update.docChanged)
-            console.log('doc changed')
-        }),
-      ],
-    })
-
-    const myTheme = EditorView.baseTheme({
+    const myTheme = EditorView.theme({
       '&': {
-        color: 'red',
-        backgroundColor: '#034',
+        'color': 'black',
+        'backgroundColor': 'white',
+        'width': '100%',
+        'height': '100%',
+        'border-radius': '.375rem',
+        'outline': '2px solid transparent',
+        'outline-offset': '2px',
+        'box-shadow': 'var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)',
+      },
+      '&.cm-focused': {
+        outline: 'none !important',
       },
       '.cm-content': {
-        caretColor: '#0e9',
+        caretColor: 'white',
       },
       '&.cm-focused .cm-cursor': {
-        borderLeftColor: '#0e9',
+        borderLeftColor: 'black',
       },
       '&.cm-focused .cm-selectionBackground, ::selection': {
         backgroundColor: '#074',
       },
       '.cm-gutters': {
-        backgroundColor: '#045',
-        color: '#ddd',
+        backgroundColor: 'white',
+        color: 'black',
         border: 'none',
       },
+    })
+
+    const state = EditorState.create({
+      doc: 'Hello world',
+      extensions: [
+        myTheme,
+        EditorView.updateListener.of(defaultOnUpdateListener(onUpdateListener)),
+        basicSetup,
+        markdown({
+          base: markdownLanguage,
+          codeLanguages: languages,
+          addKeymap: true,
+          extensions: [],
+        })],
     })
 
     const editor = new EditorView({
       state,
       parent: editorDom.value,
-      extensions: [basicSetup, myTheme],
-
     })
 
     return editor
