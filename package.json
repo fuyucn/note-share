@@ -12,9 +12,14 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.27.0",
-    "@unocss/nuxt": "^0.45.26",
-    "eslint": "^8.24.0",
+    "@unocss/nuxt": "^0.45.28",
+    "eslint": "^8.25.0",
     "nuxt": "3.0.0-rc.11",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@codemirror/state": "^6.1.2",
+    "@codemirror/view": "^6.3.0",
+    "codemirror": "^6.0.1"
   }
 }
